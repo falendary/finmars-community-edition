@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "ZUYD2NP82P.com.finmars.mobile",
+        "paths": [ "*",  "/" ]
+      }
+    ]
+  }
+}

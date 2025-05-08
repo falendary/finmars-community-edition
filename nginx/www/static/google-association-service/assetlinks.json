@@ -1,0 +1,27 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.finmars.app",
+      "sha256_cert_fingerprints": [
+        "1A:6C:25:F9:8E:5D:4F:FF:54:82:07:18:B9:CB:95:28:14:CD:3F:92:FF:80:35:EC:B1:48:AE:EE:8E:FE:72:30"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.finmars.mobile",
+      "sha256_cert_fingerprints": [
+        "FF:AA:A6:3E:CA:BB:89:39:2E:03:49:05:17:12:B5:7D:1B:79:55:29:3F:EE:CF:2D:1C:62:18:CB:8C:17:EF:45"
+      ]
+    }
+  }
+]

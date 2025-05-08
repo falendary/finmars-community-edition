@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 504 - Gateway Timeout</title>
+    <link rel="stylesheet" href="/nginx/css/styles.css">
+</head>
+<body>
+<div class="container">
+
+    <div id="tsparticles"></div>
+
+    <img src="/nginx/images/sphere.png" alt="" class="finmars-sphere">
+
+    <div class="finmars-main-box">
+
+        <h1>504</h1>
+        <p>Oops, our server did not receive a timely response from the upstream server it accessed in attempting to
+            complete your request.</p>
+        <p>We're sorry for the inconvenience. Our team has been notified and we'll fix the problem as soon as we
+            can.</p>
+        <a href="/">Take me back to the homepage</a>
+
+        <div class="finmars-main-copyright"><span class="finmars-main-copyright-text">Copyright ©</span> <span
+                class="finmars-main-copyright-text current-year">2022</span> <a href="https://finmars.com"
+                                                                                class="finmars-site-link">Finmars
+            SCSA</a></div>
+
+    </div>
+
+
+</div>
+
+<script src="/nginx/scripts/jquery.min.js"></script>
+
+
+<script src="/nginx/scripts/tsparticles.engine.min.js"></script>
+<script src="/nginx/scripts/tsparticles.move.base.min.js"></script>
+<script src="/nginx/scripts/tsparticles.shape.circle.min.js"></script>
+<script src="/nginx/scripts/tsparticles.updater.color.min.js"></script>
+<script src="/nginx/scripts/tsparticles.updater.opacity.min.js"></script>
+<script src="/nginx/scripts/tsparticles.updater.out-modes.min.js"></script>
+<script src="/nginx/scripts/tsparticles.updater.size.min.js"></script>
+<script src="/nginx/scripts/tsparticles.preset.stars.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.current-year').html(new Date().getFullYear())
+
+    });
+
+
+</script>
+
+<script type="text/javascript">
+    (async () => {
+        await loadStarsPreset(tsParticles);
+
+        await tsParticles.load("tsparticles", {preset: "stars"});
+    })();
+</script>
+
+
+</body>
