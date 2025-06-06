@@ -7,7 +7,6 @@ Before start app
     docker compose run --rm certbot
 4. Create realm finmars and user in keycloak 
 
-
 Init app
 
 1. make migrate
