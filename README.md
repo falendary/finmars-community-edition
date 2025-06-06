@@ -8,9 +8,7 @@ Before start app
 4. Create realm finmars and user in keycloak 
 
 
-
-*0 make import-sql (if nessary)
-*0.2 change db scheme name to space00000 in core_realm00000 and workflow_realm00000 db and update core_realm00000/space00000/users_masteruser space_code on space00000
+Init app
 
 1. make migrate
 2. make up
