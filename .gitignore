@@ -1,4 +1,4 @@
 .env
 postgres_data
-authorizer_postgres_data
+postgres_data_keycloak
 nginx/ssl

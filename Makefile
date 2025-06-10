@@ -1,9 +1,9 @@
 COMPOSE = docker compose
 
-.PHONY: env migrate up down restart-nginx import-sql export-sql
+.PHONY: generate-env migrate up down restart-nginx import-sql export-sql
 
 
-env:
+generate-env:
 	@if [ -f .env ]; then \
 		read -p ".env already exists. Overwrite? (y/N): " ans; \
 		if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
@@ -16,6 +16,9 @@ env:
 		cp .env.sample .env; \
 		echo ".env created from .env.sample."; \
 	fi
+
+init-keycloak:
+	./init-keycloak.sh
 
 migrate:
 	./migrate.sh
