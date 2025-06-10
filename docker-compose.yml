@@ -14,6 +14,7 @@ services:
       - vue-portal
       - portal
       - workflow-portal
+      - finmars-start-page
     ports:
       - "80:80"
       - "443:443"
@@ -66,9 +67,18 @@ services:
     ports:
       - "8000:8080"
 
-  # core-worker:
-
-  # core-scheduler:  
+  core-worker:
+    build: ../finmars-core 
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=core_realm00000
+      - DJANGO_SETTINGS_MODULE=poms_app.settings
+      - INSTANCE_TYPE=worker
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
 
   core-migration:
     build: ../finmars-core
@@ -97,9 +107,31 @@ services:
     ports:
       - "8001:8080"
 
-  # workflow-worker:
+  workflow-worker:
+    build: ../finmars-workflow
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=workflow_realm00000
+      - INSTANCE_TYPE=worker
+      - DJANGO_SETTINGS_MODULE=workflow_app.settings
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+      - keycloak
 
-  # workflow-scheduler:
+  workflow-scheduler:
+    build: ../finmars-workflow
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=workflow_realm00000
+      - INSTANCE_TYPE=beat
+      - DJANGO_SETTINGS_MODULE=workflow_app.settings
+    depends_on:
+      - db
+      - redis
 
   workflow-migration:
     build: ../finmars-workflow
@@ -129,8 +161,8 @@ services:
   #   ports:
   #     - "8002:8080"
   
-  landing-private:
-    build: ../landing-private
+  finmars-start-page:
+    build: ../finmars-start-page
     env_file:
       - .env
     ports:
