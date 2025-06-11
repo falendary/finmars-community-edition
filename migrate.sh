@@ -19,7 +19,7 @@ done
 echo "✅ PostgreSQL is ready."
 
 echo "📦 Creating databases..."
-for DB_NAME in core_realm00000 workflow_realm00000 oplap_realm0000; do
+for DB_NAME in core_realm00000 workflow_realm00000; do
   echo "🔍 Checking if database '$DB_NAME' exists..."
   if docker exec -i $(docker compose ps -q db) psql -U ${DB_USER} -tAc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1; then
     echo "✅ Database '$DB_NAME' already exists."
@@ -42,8 +42,6 @@ docker compose run --build --rm core-migration
 
 echo "🚚 Running migrations workflow"
 docker compose run --build --rm workflow-migration
-
-# olap migration
 
 docker compose down
 echo "✅ Done!"
