@@ -62,8 +62,6 @@ services:
 
   core:
     image: finmars/finmars-core:1.19.0-stable
-    volumes:
-      - ../finmars-core/poms:/var/app/poms
     env_file:
       - .env
     environment:
@@ -100,8 +98,6 @@ services:
 
   workflow:
     image: finmars/finmars-workflow:1.19.0-stable
-    volumes:
-      - ../finmars-workflow/workflow:/var/app/workflow
     env_file:
       - .env
     environment:
