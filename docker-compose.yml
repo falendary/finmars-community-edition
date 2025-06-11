@@ -50,17 +50,11 @@ services:
       - .env
     environment:
       - KC_DB=postgres
-      - KC_DB_URL_HOST=db_keycloak
-      - KC_DB_URL_DATABASE=keycloak
-      - KC_DB_USERNAME=keycloak
-      - KC_DB_PASSWORD=keycloak
       - KC_BOOTSTRAP_ADMIN_USERNAME=${ADMIN_USERNAME}
       - KC_BOOTSTRAP_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - KEYCLOAK_ADMIN=${ADMIN_USERNAME}
       - KEYCLOAK_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - KEYCLOAK_IMPORT=/opt/keycloak/data/import
-    ports:
-      - "8004:8080"
     depends_on:
       - db_keycloak
 
@@ -77,8 +71,6 @@ services:
       - rabbitmq
       - redis
       - keycloak
-    ports:
-      - "8000:8080"
 
   core-worker:
     image: finmars/finmars-core:1.19.0-stable
@@ -117,8 +109,6 @@ services:
       - rabbitmq
       - redis
       - keycloak
-    ports:
-      - "8001:8080"
 
   workflow-worker:
     image: finmars/finmars-workflow:1.19.0-stable
@@ -161,8 +151,6 @@ services:
     image: finmars/finmars-start-page:1.19.0-stable
     env_file:
       - .env
-    ports:
-      - "8083:8080"
 
   portal:
     image: finmars/finmars-portal:1.19.0-stable
@@ -172,22 +160,18 @@ services:
       - "8080:8080" 
 
   vue-portal:
-    image: finmars/finmars-vue-portal:1.19.0-stable
+    image: finmars/finmars-vue-portal:1.19.1-rc
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/v/_nuxt/
     env_file:
       - .env
-    ports:
-      - "8081:8080"
 
   workflow-portal:
-    image: finmars/finmars-workflow-portal:1.19.0-stable
+    image: finmars/finmars-workflow-portal:1.19.1-rc
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/w/_nuxt/
     env_file:
       - .env
-    ports:
-      - "8082:8080"
 
   db:
     image: postgres:13-alpine
@@ -199,21 +183,17 @@ services:
       POSTGRESQL_MAX_OPEN_CONNS: 500
     stdin_open: true
     tty: true
-    ports:
-      - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
   db_keycloak:
     image: postgres:13-alpine
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: ${KC_DB_URL_DATABASE}
+      POSTGRES_USER: ${KC_DB_USERNAME}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
     stdin_open: true
     tty: true
-    ports:
-      - "5435:5432"
     volumes:
       - ./postgres_data_keycloak:/var/lib/postgresql/data
 
@@ -233,5 +213,4 @@ services:
 
 volumes:
   postgres_data:
-  authorizer_postgres_data:
-  certbot-webroot:
+  postgres_data_keycloak:
