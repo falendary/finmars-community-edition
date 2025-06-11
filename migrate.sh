@@ -29,7 +29,7 @@ for DB_NAME in core_realm00000 workflow_realm00000; do
   fi
 
   echo "🔍 Checking if schema '$BASE_API_URL' exists in '$DB_NAME'..."
-  if docker exec -i $(docker compose ps -q db) psql -U ${DB_USER} -d "$DB_NAME" -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '$SCHEMA_NAME';" | grep -q "$SCHEMA_NAME"; then
+  if docker exec -i $(docker compose ps -q db) psql -U ${DB_USER} -d "$DB_NAME" -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '$BASE_API_URL';" | grep -q "$BASE_API_URL"; then
     echo "✅ Schema '$BASE_API_URL' already exists in '$DB_NAME'."
   else
     echo "➕ Creating schema '$BASE_API_URL' in '$DB_NAME'..."
