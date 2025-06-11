@@ -57,6 +57,8 @@ services:
       - KEYCLOAK_IMPORT=/opt/keycloak/data/import
     depends_on:
       - db_keycloak
+    ports:
+      - "8004:8080"
 
   core:
     image: finmars/finmars-core:1.19.0-stable
