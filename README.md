@@ -1,12 +1,67 @@
-Before start app
+<p align="center">
+  <p align="center">
+    <a href="https://finmars.io/?utm_source=github&utm_medium=logo" target="_blank">
+      <img src="https://github.com/finmars-platform/finmars-core/blob/main/finmars-misc/logo_white_bg.png" alt="Finmars" height="84" />
+    </a>
+  </p>
+</p>
 
-1. Create VPS
-2. Create main and auth domain
+# Finmars Community Edition
+
+Finmars is a **free, open-source** platform to help you manage all your money and investments in one place.  You can pull in data from many accounts and see it together.  
+\
+It gives you easy tools to create reports, dashboards, and PDFs without writing code.  
+You can add extra features from our open marketplace — just pick what you need and plug it in.  
+Finmars runs in your web browser, so you and your team can use it from anywhere.
+
+<p align="center">
+  <img src="https://github.com/finmars-platform/finmars-core/blob/main/finmars-misc/dashboard.png" width="270" />
+  <img src="https://github.com/finmars-platform/finmars-core/blob/main/finmars-misc/report.png" width="270" />
+  <img src="https://github.com/finmars-platform/finmars-core/blob/main/finmars-misc/book.png" width="270" />
+  <img src="https://github.com/finmars-platform/finmars-core/blob/main/finmars-misc/matrix.png" width="270" />
+</p>
+
+## Getting Started
+
+To install and to start using Finmars please refer [Getting Started Community Edition](https://docs.finmars.com/shelves/community-edition).
 
 
-Init app
-1. make generate-env
-2. make init-cert
-3. make init-keycloak
-4. make migrate
-5. make up
+#### Self-Hosting with Docker Compose
+This is the simplest way to get a local Finmars instance running.
+
+On Linux or Mac Enviroment (preferable on your Linux Server VM):
+```bash
+# Clone the Finmars Community Edition repository
+git clone https://github.com/finmars-platform/finmars-community-edition.git
+
+# Navigate to the repository
+cd finmars-community-edition
+
+# Configure env file
+make generate-env
+
+# Configure Certs
+make init-cert
+
+# Init Keycloak
+make init-keycloak
+
+# Run Migrations
+make migrate
+
+# Run Finmars
+make up
+
+# Verify containers
+docker ps
+
+```
+
+## License
+Please refer to the [LICENSE](https://github.com/finmars-platform/finmars-core/blob/main/LICENSE.md) file for a copy of the license.
+
+
+## Support
+Please use the GitHub issues for support, feature requests and bug reports, or contact us by sending an email to support@finmars.com.
+
+
