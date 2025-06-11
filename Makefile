@@ -4,18 +4,7 @@ COMPOSE = docker compose
 
 
 generate-env:
-	@if [ -f .env ]; then \
-		read -p ".env already exists. Overwrite? (y/N): " ans; \
-		if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
-			cp .env.sample .env; \
-			echo ".env overwritten."; \
-		else \
-			echo "Skipped creating .env."; \
-		fi; \
-	else \
-		cp .env.sample .env; \
-		echo ".env created from .env.sample."; \
-	fi
+	./generate-env.sh
 
 init-keycloak:
 	./init-keycloak.sh
