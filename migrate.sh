@@ -11,9 +11,11 @@ docker compose up -d redis
 echo "🚀 Starting PostgreSQL container..."
 docker compose up -d db
 
+sleep 5
+
 echo "⏳ Waiting for PostgreSQL to be ready..."
 until docker exec $(docker compose ps -q db) pg_isready -U ${DB_USER} > /dev/null 2>&1; do
-  sleep 1
+  sleep 5
 done
 
 echo "✅ PostgreSQL is ready."
