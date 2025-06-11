@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name ap-finmars-auth.finmars.com;
+    server_name ${AUTH_DOMAIN_NAME};
 
     location /.well-known/acme-challenge/ {
         root /tmp/certbot;
@@ -13,10 +13,10 @@ server {
 
 server {
     listen 443 ssl;
-    server_name ap-finmars-auth.finmars.com;
+    server_name ${AUTH_DOMAIN_NAME};
 
-    ssl_certificate /etc/letsencrypt/live/ap-finmars-auth.finmars.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/ap-finmars-auth.finmars.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/${MAIN_DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${MAIN_DOMAIN_NAME}/privkey.pem;
 
     client_max_body_size 2024m;
     

@@ -39,10 +39,6 @@ docker exec $(docker compose ps -q keycloak) /opt/keycloak/bin/kcadm.sh create u
   -r "finmars" \
   -s username="$ADMIN_USERNAME" \
   -s enabled=true \
-#   -s email="$EMAIL" \
-#   -s firstName="$FIRST_NAME" \
-#   -s lastName="$LAST_NAME"
-
 
 echo "➕ Setting password for user $ADMIN_USERNAME..."
 docker exec $(docker compose ps -q keycloak) /opt/keycloak/bin/kcadm.sh set-password \

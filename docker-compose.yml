@@ -2,12 +2,14 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./nginx/main-domain.conf:/etc/nginx/conf.d/main-domain.conf:ro
-      - ./nginx/auth-domain.conf:/etc/nginx/conf.d/auth-domain.conf:ro
+      - ./nginx/main-domain.conf.template:/etc/nginx/templates/main-domain.conf.template
+      - ./nginx/auth-domain.conf.template:/etc/nginx/templates/auth-domain.conf.template
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/www:/var/www:ro
       - ./nginx/ssl:/etc/letsencrypt
       - ./certbot/webroot:/tmp/certbot
+    env_file:
+      - .env
     depends_on:
       - core
       - workflow
@@ -23,10 +25,17 @@ services:
     image: certbot/certbot
     volumes:
       - ./nginx/ssl:/etc/letsencrypt
-      - ./certbot/webroot:/tmp/certbot
+    env_file:
+      - .env
+    ports:
+      - "80:80" 
     command: [
       "certonly",
-      "--webroot"
+      "--standalone",
+      "--non-interactive",
+      "--agree-tos",
+      "-d", "${MAIN_DOMAIN_NAME}",
+      "-d", "${AUTH_DOMAIN_NAME}"
     ]
 
   keycloak:
@@ -148,23 +157,6 @@ services:
       - db
       - redis
 
-  # olap:
-  #   build: ../finmars-olap
-  #   volumes:
-  #     - ../finmars-olap/olap:/var/app/olap
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - DB_NAME=olap_realm00000
-  #     - DB_USER=postgres
-  #     - DB_PASSWORD=postgres
-  #   depends_on:
-  #     - db
-  #     - rabbitmq
-  #     - redis
-  #   ports:
-  #     - "8002:8080"
-  
   finmars-start-page:
     build: ../finmars-start-page
     env_file:
