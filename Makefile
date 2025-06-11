@@ -20,6 +20,9 @@ generate-env:
 init-keycloak:
 	./init-keycloak.sh
 
+init-cert:
+	docker compose up certbot
+
 migrate:
 	./migrate.sh
 
