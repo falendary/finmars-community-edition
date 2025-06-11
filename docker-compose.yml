@@ -65,7 +65,7 @@ services:
       - db_keycloak
 
   core:
-    build: ../finmars-core
+    image: finmars/finmars-core:1.19.0-stable
     volumes:
       - ../finmars-core/poms:/var/app/poms
     env_file:
@@ -81,7 +81,7 @@ services:
       - "8000:8080"
 
   core-worker:
-    build: ../finmars-core 
+    image: finmars/finmars-core:1.19.0-stable
     env_file:
       - .env
     environment:
@@ -94,7 +94,7 @@ services:
       - redis
 
   core-migration:
-    build: ../finmars-core
+    image: finmars/finmars-core:1.19.0-stable
     env_file:
       - .env
     environment:
@@ -105,7 +105,7 @@ services:
       - redis
 
   workflow:
-    build: ../finmars-workflow
+    image: finmars/finmars-workflow:1.19.0-stable
     volumes:
       - ../finmars-workflow/workflow:/var/app/workflow
     env_file:
@@ -121,7 +121,7 @@ services:
       - "8001:8080"
 
   workflow-worker:
-    build: ../finmars-workflow
+    image: finmars/finmars-workflow:1.19.0-stable
     env_file:
       - .env
     environment:
@@ -135,7 +135,7 @@ services:
       - keycloak
 
   workflow-scheduler:
-    build: ../finmars-workflow
+    image: finmars/finmars-workflow:1.19.0-stable
     env_file:
       - .env
     environment:
@@ -147,7 +147,7 @@ services:
       - redis
 
   workflow-migration:
-    build: ../finmars-workflow
+    image: finmars/finmars-workflow:1.19.0-stable
     env_file:
       - .env
     environment:
@@ -158,21 +158,21 @@ services:
       - redis
 
   finmars-start-page:
-    build: ../finmars-start-page
+    image: finmars/finmars-start-page:1.19.0-stable
     env_file:
       - .env
     ports:
       - "8083:8080"
 
   portal:
-    build: ../finmars-portal
+    image: finmars/finmars-portal:1.19.0-stable
     env_file:
       - .env
     ports:
       - "8080:8080" 
 
   vue-portal:
-    build: ../finmars-vue-portal
+    image: finmars/finmars-vue-portal:1.19.0-stable
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/v/_nuxt/
     env_file:
@@ -181,7 +181,7 @@ services:
       - "8081:8080"
 
   workflow-portal:
-    build: ../finmars-workflow-portal
+    image: finmars/finmars-workflow-portal:1.19.0-stable
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/w/_nuxt/
     env_file:
@@ -216,6 +216,7 @@ services:
       - "5435:5432"
     volumes:
       - ./postgres_data_keycloak:/var/lib/postgresql/data
+
   rabbitmq:
     image: rabbitmq
     ports:

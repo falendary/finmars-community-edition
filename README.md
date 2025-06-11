@@ -10,5 +10,3 @@ Init app
 3. make init-keycloak
 4. make migrate
 5. make up
-
-!!!Attention: remove .env file from frontend repositories
