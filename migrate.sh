@@ -37,6 +37,9 @@ for DB_NAME in core_realm00000 workflow_realm00000; do
     echo "➕ Creating schema '$BASE_API_URL' in '$DB_NAME'..."
     docker exec -i $(docker compose ps -q db) psql -U ${DB_USER} -d "$DB_NAME" -c "CREATE SCHEMA $BASE_API_URL;"
   fi
+
+  echo "🧹 Dropping public schema from '$DB_NAME'..."
+  docker exec -i $(docker compose ps -q db) psql -U ${DB_USER} -d "$DB_NAME" -c "DROP SCHEMA IF EXISTS public CASCADE;"
 done
 
 echo "🚚 Running migrations core"
