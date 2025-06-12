@@ -1,6 +1,6 @@
 COMPOSE = docker compose
 
-.PHONY: generate-env migrate up down restart-nginx import-sql export-sql
+.PHONY: generate-env init-keycloak init-cert migrate up down restart-nginx import-sql export-sql db
 
 
 generate-env:
@@ -16,7 +16,7 @@ migrate:
 	./migrate.sh
 
 up:
-	$(COMPOSE) up --build \
+	$(COMPOSE) up --build -d \
 	--remove-orphans \
 	--scale core-migration=0 \
 	--scale workflow-migration=0 \
@@ -36,6 +36,3 @@ export-sql:
 
 db:
 	docker compose up -d db
-
-db-authorizer:
-	docker compose up -d db-authorizer
