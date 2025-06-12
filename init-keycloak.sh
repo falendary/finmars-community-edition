@@ -16,6 +16,8 @@ wait_for_keycloak() {
 echo "🚀 Starting Keycloak PostgreSQL container..."
 docker compose up -d db_keycloak
 
+sleep 5
+
 echo "⏳ Waiting for Keycloak PostgreSQL to be ready..."
 until docker exec $(docker compose ps -q db_keycloak) pg_isready -U ${DB_USER} > /dev/null 2>&1; do
   sleep 1

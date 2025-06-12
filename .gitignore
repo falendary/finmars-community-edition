@@ -1,5 +1,8 @@
 .env
+.env.bak
+nohup.out
 postgres_data
 postgres_data_keycloak
 nginx/ssl
+storage
 .idea
