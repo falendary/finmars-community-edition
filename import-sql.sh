@@ -8,6 +8,8 @@ set +o allexport
 echo "🚀 Starting PostgreSQL container..."
 docker compose up -d db
 
+sleep 5
+
 echo "⏳ Waiting for PostgreSQL to be ready..."
 until docker exec $(docker compose ps -q db) pg_isready -U ${DB_USER} > /dev/null 2>&1; do
   sleep 1
@@ -28,7 +30,7 @@ done
 
 for SERVICE_NAME in core workflow; do
   echo "🚚 Importing from data from dumps for $SERVICE_NAME..."
-	docker exec -i finmars-community-edition-db-1 psql -U ${DB_USER} -d ${SERVICE_NAME}_realm00000 < ../finmars-${SERVICE_NAME}/${SERVICE_NAME}.sql
+	docker exec -i finmars-community-edition-db-1 psql -U ${DB_USER} -d ${SERVICE_NAME}_realm00000 < ./${SERVICE_NAME}.sql
 done
 
 docker compose down
