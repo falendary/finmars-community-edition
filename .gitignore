@@ -6,3 +6,4 @@ postgres_data_keycloak
 nginx/ssl
 storage
 .idea
+*.sql

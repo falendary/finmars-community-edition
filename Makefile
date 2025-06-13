@@ -1,6 +1,6 @@
 COMPOSE = docker compose
 
-.PHONY: generate-env init-keycloak init-cert migrate up down restart-nginx import-sql export-sql db
+.PHONY: generate-env init-keycloak init-cert migrate up down restart-nginx import-sql export-sql db logs
 
 
 generate-env:
@@ -36,3 +36,6 @@ export-sql:
 
 db:
 	docker compose up -d db
+
+logs:
+	docker compose logs -f
