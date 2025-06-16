@@ -62,10 +62,10 @@ services:
       - "8004:8080"
 
   core:
-    image: finmars/finmars-core:1.19.3-rc
+    image: finmars/finmars-core:1.19.5-rc
     restart: always
     volumes:
-      - ./storage/core:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
@@ -77,10 +77,10 @@ services:
       - keycloak
 
   core-worker:
-    image: finmars/finmars-core:1.19.3-rc
+    image: finmars/finmars-core:1.19.5-rc
     restart: always
     volumes:
-      - ./storage/core:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
@@ -93,9 +93,9 @@ services:
       - redis
 
   core-migration:
-    image: finmars/finmars-core:1.19.3-rc
+    image: finmars/finmars-core:1.19.5-rc
     volumes:
-      - ./storage/core:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
@@ -106,14 +106,15 @@ services:
       - redis
 
   workflow:
-    image: finmars/finmars-workflow:1.19.2-rc
+    image: finmars/finmars-workflow:1.19.3-rc
     restart: always
     volumes:
-      - ./storage/workflow:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
       - DB_NAME=workflow_realm00000
+      - DOMAIN_NAME=${MAIN_DOMAIN_NAME}
     depends_on:
       - db
       - rabbitmq
@@ -121,16 +122,17 @@ services:
       - keycloak
 
   workflow-worker:
-    image: finmars/finmars-workflow:1.19.2-rc
+    image: finmars/finmars-workflow:1.19.3-rc
     restart: always
     volumes:
-      - ./storage/workflow:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
       - DB_NAME=workflow_realm00000
       - INSTANCE_TYPE=worker
       - DJANGO_SETTINGS_MODULE=workflow_app.settings
+      - DOMAIN_NAME=${MAIN_DOMAIN_NAME}
     depends_on:
       - db
       - rabbitmq
@@ -138,29 +140,31 @@ services:
       - keycloak
 
   workflow-scheduler:
-    image: finmars/finmars-workflow:1.19.2-rc
+    image: finmars/finmars-workflow:1.19.3-rc
     restart: always
     volumes:
-      - ./storage/workflow:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
       - DB_NAME=workflow_realm00000
       - INSTANCE_TYPE=beat
       - DJANGO_SETTINGS_MODULE=workflow_app.settings
+      - DOMAIN_NAME=${MAIN_DOMAIN_NAME}
     depends_on:
       - db
       - redis
 
   workflow-migration:
-    image: finmars/finmars-workflow:1.19.2-rc
+    image: finmars/finmars-workflow:1.19.3-rc
     volumes:
-      - ./storage/workflow:/var/app/finmars_data
+      - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
       - DB_NAME=workflow_realm00000
       - INSTANCE_TYPE=job
+      - DOMAIN_NAME=${MAIN_DOMAIN_NAME}
     depends_on:
       - db
       - redis
@@ -201,21 +205,22 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRESQL_MAX_OPEN_CONNS: 500
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     stdin_open: true
     tty: true
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"    
 
   db_keycloak:
     image: postgres:13-alpine
     restart: always
     environment:
-      POSTGRES_DB: ${KC_DB_URL_DATABASE}
-      POSTGRES_USER: ${KC_DB_USERNAME}
-      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+      - POSTGRES_DB=${KC_DB_URL_DATABASE}
+      - POSTGRES_USER=${KC_DB_USERNAME}
+      - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
     stdin_open: true
     tty: true
     volumes:
