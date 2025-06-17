@@ -62,7 +62,7 @@ services:
       - "8004:8080"
 
   core:
-    image: finmars/finmars-core:1.19.6-rc
+    image: finmars/finmars-core:1.19.7-rc
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -77,7 +77,7 @@ services:
       - keycloak
 
   core-worker:
-    image: finmars/finmars-core:1.19.6-rc
+    image: finmars/finmars-core:1.19.7-rc
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -93,7 +93,7 @@ services:
       - redis
 
   core-migration:
-    image: finmars/finmars-core:1.19.6-rc
+    image: finmars/finmars-core:1.19.7-rc
     volumes:
       - ./storage:/var/app/finmars_data
     env_file:
