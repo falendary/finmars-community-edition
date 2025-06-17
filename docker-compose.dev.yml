@@ -62,14 +62,17 @@ services:
       - "8004:8080"
 
   core:
-    image: finmars/finmars-core:1.19.6-rc
+    build:
+      context: ../finmars-core
     restart: always
     volumes:
+      - ../finmars-core/poms:/var/app/poms
       - ./storage:/var/app/finmars_data
     env_file:
       - .env
     environment:
       - DB_NAME=core_realm00000
+      # - LOCAL=1
     depends_on:
       - db
       - rabbitmq
@@ -77,7 +80,8 @@ services:
       - keycloak
 
   core-worker:
-    image: finmars/finmars-core:1.19.6-rc
+    build:
+      context: ../finmars-core
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -93,9 +97,10 @@ services:
       - redis
 
   core-migration:
-    image: finmars/finmars-core:1.19.6-rc
+    build:
+      context: ../finmars-core
     volumes:
-      - ./storage:/var/app/finmars_data
+      - ../finmars-core/poms:/var/app/poms
     env_file:
       - .env
     environment:
@@ -106,15 +111,18 @@ services:
       - redis
 
   workflow:
-    image: finmars/finmars-workflow:1.19.3-rc
+    build:
+      context: ../finmars-workflow
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
+      - ../finmars-workflow/workflow:/var/app/workflow
     env_file:
       - .env
     environment:
       - DB_NAME=workflow_realm00000
       - DOMAIN_NAME=${MAIN_DOMAIN_NAME}
+      # - LOCAL=1
     depends_on:
       - db
       - rabbitmq
@@ -122,7 +130,8 @@ services:
       - keycloak
 
   workflow-worker:
-    image: finmars/finmars-workflow:1.19.3-rc
+    build:
+      context: ../finmars-workflow
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -140,7 +149,8 @@ services:
       - keycloak
 
   workflow-scheduler:
-    image: finmars/finmars-workflow:1.19.3-rc
+    build:
+      context: ../finmars-workflow
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -156,7 +166,8 @@ services:
       - redis
 
   workflow-migration:
-    image: finmars/finmars-workflow:1.19.3-rc
+    build:
+      context: ../finmars-workflow
     volumes:
       - ./storage:/var/app/finmars_data
     env_file:

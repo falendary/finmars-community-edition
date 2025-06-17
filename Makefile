@@ -1,4 +1,5 @@
 COMPOSE = docker compose
+COMPOSE_FILE ?= docker-compose.yml
 
 .PHONY: generate-env init-keycloak init-cert migrate up down restart-nginx import-sql export-sql db logs
 
@@ -16,7 +17,7 @@ migrate:
 	./migrate.sh
 
 up:
-	$(COMPOSE) up --build -d \
+	$(COMPOSE) -f $(COMPOSE_FILE) up --build -d \
 	--remove-orphans \
 	--scale core-migration=0 \
 	--scale workflow-migration=0 \
