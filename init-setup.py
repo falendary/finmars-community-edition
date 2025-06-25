@@ -133,10 +133,6 @@ def run_pending_step():
 
         if state.get(step) == 'requested':
 
-            if step == 'init_cert':
-                subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
-                time.sleep(2)
-
             executed = True
             state[step] = 'in_progress'
             save_state(state)
@@ -148,7 +144,6 @@ def run_pending_step():
                 append_log(title, '', str(e))
                 state[step] = 'failed'
             save_state(state)
-            if step == 'init_cert': subprocess.run(['systemctl', 'start', 'init-setup'], check=False)
             if step == 'docker_up': disable_autostart()
             if os.path.exists(LOG_FILE):
                 with open(LOG_FILE) as logf:
@@ -200,4 +195,4 @@ if __name__ == '__main__':
         run_pending_step()
     else:
         if os.path.exists(LOG_FILE): os.remove(LOG_FILE)
-        app.run(host='0.0.0.0', port=80)
+        app.run(host='0.0.0.0', port=8080)
