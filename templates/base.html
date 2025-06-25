@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+    <title>Finmars Community Edition | Wizard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        p.intro {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: #f85e26;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1rem;
+            display: block;
+            margin: 20px auto 0;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            margin: 0 10px;
+            color: #f85e26;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    {# This is where each page’s unique HTML will go #}
+    {% block content %}{% endblock %}
+    <div class="footer">
+        <a href="mailto:support@finmars.com">support@finmars.com</a> |
+        <a href="https://docs.finmars.com/shelves/community-edition">Documentation</a> |
+        <a href="https://github.com/finmars-platform/finmars-core/issues">Github</a>
+    </div>
+</div>
+</body>
+</html>
