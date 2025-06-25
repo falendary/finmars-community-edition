@@ -135,6 +135,13 @@ def run_pending_step():
                 state[step] = 'failed'
                 print(f"[init-setup] Step {step} failed with exception: {e}")
             save_state(state)
+
+            # If certs step just finished, restart the init-setup service
+            if step == 'init_cert':
+                print("[init-setup] Restarting init-setup service...")
+                sys.stdout.flush()
+                subprocess.run(['systemctl', 'start', 'init-setup'], check=False)
+
             # After docker_up, disable init-setup service
             if step == 'docker_up':
                 print("[init-setup] Disabling init-setup autostart...")
@@ -158,7 +165,7 @@ def setup():
         # Handle generate_env synchronously
         if step == 'generate_env' and state.get(step) == 'pending':
             inp = (
-                f"y\n{request.form['DOMAIN']}\n"
+                f"{request.form['DOMAIN']}\n"
                 f"{request.form['AUTH_DOMAIN']}\n"
                 f"{request.form['ADMIN_USERNAME']}\n"
                 f"{request.form['ADMIN_PASSWORD']}\n"
