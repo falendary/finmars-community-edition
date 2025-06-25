@@ -1,7 +1,5 @@
 from flask import Flask, request, render_template_string, redirect, url_for
-import subprocess, os, sys, json, argparse
-
-import time
+import subprocess, os, sys, json, argparse, time
 
 app = Flask(__name__)
 
@@ -18,50 +16,80 @@ def get_setup_steps():
         ('docker_up', ['make', 'up'], 'Services Started')
     ]
 
+# Common CSS style for templates
+base_style = '''<style>
+  body { font-family: system-ui, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+  .container { max-width: 640px; margin: 40px auto; background: #fff; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px; }
+  h2 { margin-top: 0; }
+  p.intro { font-size: 0.95rem; margin-bottom: 20px; }
+  label { display: block; margin-bottom: 8px; font-weight: 500; }
+  input { width: 100%; padding: 8px; margin: 4px 0 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+  .btn { background-color: #f85e26; color: #fff; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-size: 1rem; display: block; margin: 20px auto 0; }
+  .btn:hover { opacity: 0.9; }
+  pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  .footer { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+  .footer a { margin: 0 10px; color: #f85e26; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+</style>'''
+
+# Footer HTML
+footer_html = '''
+<div class="footer">
+  <a href="mailto:support@finmars.com" target="_blank">support@finmars.com</a> |
+  <a href="https://docs.finmars.com/shelves/community-edition" target="_blank">Documentation</a> |
+  <a href="https://github.com/finmars-platform/finmars-core/issues" target="_blank">Github</a>
+</div>'''
+
 # HTML templates
-form_html = '''
-<h2>Finmars Initial Setup</h2>
-<form method="POST">
-  <input type="hidden" name="step" value="generate_env">
-  Main Domain (e.g. ap.finmars.com): <input name="DOMAIN" required><br>
-  Auth Domain (e.g. auth.ap-finmars-auth.finmars.com): <input name="AUTH_DOMAIN" required><br>
-  Admin Username: <input name="ADMIN_USERNAME" required><br>
-  Admin Password: <input name="ADMIN_PASSWORD" type="password" required><br>
-  <button type="submit">Create .env Now</button>
-</form>
+form_html = base_style + '''
+<div class="container">
+  <h2>Finmars Initial Setup</h2>
+  <p class="intro">This short wizard will help you install Finmars on your server. Please provide the details below and click Continue Setup.</p>
+  <form method="POST">
+    <input type="hidden" name="step" value="generate_env">
+    <label>Main Domain (e.g. finmars.example.com):<br><input name="DOMAIN" required></label>
+    <label>Auth Domain (e.g. finmars-auth.example.com):<br><input name="AUTH_DOMAIN" required></label>
+    <label>Admin Username:<br><input name="ADMIN_USERNAME" required></label>
+    <label>Admin Password:<br><input name="ADMIN_PASSWORD" type="password" required></label>
+    <button type="submit" class="btn">Continue Setup</button>
+  </form>
+  ''' + footer_html + '''
+</div>
 '''
 
-step_button_html = '''
-<h2>Finmars Setup: {{ label }}</h2>
-<form method="POST">
-  <input type="hidden" name="step" value="{{ step }}">
-  <button type="submit">Request {{ label }}</button>
-</form>
+step_button_html = base_style + '''
+<div class="container">
+  <h2>Finmars Setup: {{ label }}</h2>
+  <form method="POST">
+    <input type="hidden" name="step" value="{{ step }}">
+    <button type="submit" class="btn">Continue Setup</button>
+  </form>
+  ''' + footer_html + '''
+</div>
 '''
 
-status_html = '''
-<h2>{{ title }}</h2>
-<pre>{{ logs }}</pre>
-<pre>Current status: {{ status }}</pre>
-<script>
-  setTimeout(function() { window.location.reload(); }, 5000);
-</script>
+status_html = base_style + '''
+<div class="container">
+  <h2>{{ title }}</h2>
+  <pre>{{ logs }}</pre>
+  <pre>Current status: {{ status }}</pre>
+  ''' + footer_html + '''
+</div>
 '''
 
-success_html = '''
-<h2>✅ Setup Complete</h2>
-<p>You can now use the Finmars Platform.</p>
+success_html = base_style + '''
+<div class="container">
+  <h2>✅ Setup Complete</h2>
+  <p>You can now use the Finmars Platform.</p>
+  ''' + footer_html + '''
+</div>
 '''
 
 # State management
-
 def default_state():
-    state = {}
-    for step, _, _ in get_setup_steps():
-        state[step] = 'pending'
+    state = { step: 'pending' for step, _, _ in get_setup_steps() }
     save_state(state)
     return state
-
 
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -69,87 +97,56 @@ def load_state():
             return json.load(f)
     return default_state()
 
-
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
 
 # Logging helper
-
 def append_log(title, stdout, stderr):
     with open(LOG_FILE, 'a') as logf:
         logf.write(f"\n\n### {title}\n")
-        if stdout:
-            logf.write(stdout)
-        if stderr:
-            logf.write(stderr)
+        if stdout: logf.write(stdout)
+        if stderr: logf.write(stderr)
 
 # Autostart disable (systemd + cron)
 def disable_autostart():
     try:
-        # Stop and disable the systemd service
         subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
         subprocess.run(['systemctl', 'disable', 'init-setup'], check=False)
         unit_path = '/etc/systemd/system/init-setup.service'
-        if os.path.exists(unit_path):
-            os.remove(unit_path)
+        if os.path.exists(unit_path): os.remove(unit_path)
         subprocess.run(['systemctl', 'daemon-reload'], check=False)
     except Exception:
         pass
     try:
-        # Remove cron job entry
         subprocess.run("(crontab -l | grep -v 'init-setup.py --run-step') | crontab -", shell=True, check=False)
     except Exception:
         pass
 
 # Runner: background run one pending requested step
-
 def run_pending_step():
     state = load_state()
     print("[init-setup] Loaded state:", state)
     sys.stdout.flush()
     executed = False
     for step, cmd, title in get_setup_steps():
-
-
+        if step == 'init_cert':
+            subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
+            time.sleep(2)
         if state.get(step) == 'requested':
-
-            # If initializing certs, stop the web server to free port 80
-            if step == 'init_cert':
-                print("[init-setup] Stopping init-setup service to free port 80...")
-                sys.stdout.flush()
-                subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
-                # Brief pause to ensure port is released
-                time.sleep(2)
-
             executed = True
-            print(f"[init-setup] Executing step: {step}")
-            sys.stdout.flush()
             state[step] = 'in_progress'
             save_state(state)
             try:
                 proc = subprocess.run(cmd, capture_output=True, text=True)
                 append_log(title, proc.stdout, proc.stderr)
-                new_status = 'done' if proc.returncode == 0 else 'failed'
-                state[step] = new_status
-                print(f"[init-setup] Step {step} completed with status {new_status}")
+                state[step] = 'done' if proc.returncode == 0 else 'failed'
             except Exception as e:
                 append_log(title, '', str(e))
                 state[step] = 'failed'
-                print(f"[init-setup] Step {step} failed with exception: {e}")
             save_state(state)
-
-            # If certs step just finished, restart the init-setup service
-            if step == 'init_cert':
-                print("[init-setup] Restarting init-setup service...")
-                sys.stdout.flush()
-                subprocess.run(['systemctl', 'start', 'init-setup'], check=False)
-
-            # After docker_up, disable init-setup service
-            if step == 'docker_up':
-                print("[init-setup] Disabling init-setup autostart...")
-                disable_autostart()
-            # print log file to console
+            if step == 'init_cert': subprocess.run(['systemctl', 'start', 'init-setup'], check=False)
+            if step == 'docker_up': disable_autostart()
             if os.path.exists(LOG_FILE):
                 with open(LOG_FILE) as logf:
                     print(logf.read())
@@ -160,12 +157,11 @@ def run_pending_step():
         sys.stdout.flush()
 
 # Flask routes
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def setup():
     state = load_state()
     if request.method == 'POST':
         step = request.form.get('step')
-        # Handle generate_env synchronously
         if step == 'generate_env' and state.get(step) == 'pending':
             inp = (
                 f"{request.form['DOMAIN']}\n"
@@ -173,22 +169,15 @@ def setup():
                 f"{request.form['ADMIN_USERNAME']}\n"
                 f"{request.form['ADMIN_PASSWORD']}\n"
             )
-            cmd = ['make', 'generate-env']
-            print(f"[init-setup] Running generate-env with input:\n{inp}")
-            sys.stdout.flush()
-            proc = subprocess.run(cmd, input=inp, text=True, capture_output=True)
-            append_log('.env Created', proc.stdout, proc.stderr)
-            status = 'done' if proc.returncode == 0 else 'failed'
-            state['generate_env'] = status
+            proc = subprocess.run(get_setup_steps()[0][1], input=inp, text=True, capture_output=True)
+            append_log(get_setup_steps()[0][2], proc.stdout, proc.stderr)
+            state['generate_env'] = 'done' if proc.returncode == 0 else 'failed'
             save_state(state)
             return redirect(url_for('setup'))
-        # Queue other steps
         if step in state and state[step] == 'pending':
             state[step] = 'requested'
             save_state(state)
         return redirect(url_for('setup'))
-
-    # GET flow: determine UI
     logs = open(LOG_FILE).read() if os.path.exists(LOG_FILE) else ''
     for step, _, title in get_setup_steps():
         status = state.get(step)
@@ -196,9 +185,8 @@ def setup():
             if step == 'generate_env':
                 return render_template_string(form_html)
             return render_template_string(step_button_html, step=step, label=title)
-        if status in ('requested', 'in_progress'):
+        if status in ('requested','in_progress'):
             return render_template_string(status_html, title=title, logs=logs, status=status)
-    # all done
     return success_html
 
 if __name__ == '__main__':
@@ -208,6 +196,5 @@ if __name__ == '__main__':
     if args.run_step:
         run_pending_step()
     else:
-        # clear logs at start
         if os.path.exists(LOG_FILE): os.remove(LOG_FILE)
         app.run(host='0.0.0.0', port=80)
