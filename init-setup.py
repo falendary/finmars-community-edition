@@ -82,7 +82,6 @@ def append_log(title, stdout, stderr):
         if stderr:
             logf.write(stderr)
 
-
 # Autostart disable (systemd + cron)
 def disable_autostart():
     try:
@@ -93,14 +92,13 @@ def disable_autostart():
         if os.path.exists(unit_path):
             os.remove(unit_path)
         subprocess.run(['systemctl', 'daemon-reload'], check=False)
-    except Exception as e:
-        print("[disable_autostart] error: %s" % e)
+    except Exception:
         pass
     try:
         # Remove cron job entry
         subprocess.run("(crontab -l | grep -v 'init-setup.py --run-step') | crontab -", shell=True, check=False)
-    except Exception as e:
-        print("[disable_autostart] crontab error: %s" % e)
+    except Exception:
+        pass
 
 # Runner: background run one pending requested step
 
@@ -110,6 +108,14 @@ def run_pending_step():
     sys.stdout.flush()
     executed = False
     for step, cmd, title in get_setup_steps():
+        # If initializing certs, stop the web server to free port 80
+        if step == 'init_cert':
+            print("[init-setup] Stopping init-setup service to free port 80...")
+            sys.stdout.flush()
+            subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
+            # Brief pause to ensure port is released
+            time.sleep(2)
+
         if state.get(step) == 'requested':
             executed = True
             print(f"[init-setup] Executing step: {step}")
@@ -150,7 +156,7 @@ def setup():
         # Handle generate_env synchronously
         if step == 'generate_env' and state.get(step) == 'pending':
             inp = (
-                f"{request.form['DOMAIN']}\n"
+                f"y\n{request.form['DOMAIN']}\n"
                 f"{request.form['AUTH_DOMAIN']}\n"
                 f"{request.form['ADMIN_USERNAME']}\n"
                 f"{request.form['ADMIN_PASSWORD']}\n"
