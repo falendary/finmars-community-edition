@@ -145,7 +145,7 @@ def setup():
         # Handle generate_env synchronously
         if step == 'generate_env' and state.get(step) == 'pending':
             inp = (
-                f"y\n{request.form['DOMAIN']}\n"
+                f"{request.form['DOMAIN']}\n"
                 f"{request.form['AUTH_DOMAIN']}\n"
                 f"{request.form['ADMIN_USERNAME']}\n"
                 f"{request.form['ADMIN_PASSWORD']}\n"
