@@ -76,11 +76,27 @@ def run_pending_step():
                 state[step] = 'failed'
             save_state(state)
             if step == 'docker_up': disable_autostart()
+
+            # build a simple list of step names in order
+            step_names = [name for name, _, _ in get_setup_steps()]
+
+            # find where we just finished
+            current_index = step_names.index(step)
+
+            # look to see if there is a next one
+            if current_index + 1 < len(step_names):
+                next_step = step_names[current_index + 1]
+                if state.get(next_step) == 'pending':
+                    state[next_step] = 'requested'
+                    save_state(state)
+
             if os.path.exists(LOG_FILE):
                 with open(LOG_FILE) as logf:
                     print(logf.read())
             sys.stdout.flush()
             break
+
+
     if not executed:
         print("[init-setup] No requested steps found, nothing to run.")
         sys.stdout.flush()
@@ -102,6 +118,20 @@ def setup():
             append_log(get_setup_steps()[0][2], proc.stdout, proc.stderr)
             state['generate_env'] = 'done' if proc.returncode == 0 else 'failed'
             save_state(state)
+
+            # build a simple list of step names in order
+            step_names = [name for name, _, _ in get_setup_steps()]
+
+            # find where we just finished
+            current_index = step_names.index(step)
+
+            # look to see if there is a next one
+            if current_index + 1 < len(step_names):
+                next_step = step_names[current_index + 1]
+                if state.get(next_step) == 'pending':
+                    state[next_step] = 'requested'
+                    save_state(state)
+
             return redirect(url_for('setup'))
         if step in state and state[step] == 'pending':
             state[step] = 'requested'
@@ -110,11 +140,9 @@ def setup():
     logs = subprocess.run(['docker', 'compose', 'logs'], capture_output=True, text=True).stdout
     for step, _, title in get_setup_steps():
         status = state.get(step)
-        if status == 'pending':
-            if step == 'generate_env':
+        if step == 'generate_env' and status == 'pending':
                 return render_template("form.html")
-            return render_template("step.html", step=step, label=title)
-        if status in ('requested','in_progress'):
+        if status in ('requested','in_progress', 'pending'):
             return render_template("status.html", title=title, logs=logs, status=status)
     return render_template("success.html")
 
