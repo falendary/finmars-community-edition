@@ -181,7 +181,7 @@ def setup():
             state[step] = 'requested'
             save_state(state)
         return redirect(url_for('setup'))
-    logs = subprocess.run(['make', 'logs'], capture_output=True, text=True).stdout
+    logs = subprocess.run(['docker', 'compose', 'logs'], capture_output=True, text=True).stdout
     for step, _, title in get_setup_steps():
         status = state.get(step)
         if status == 'pending':
