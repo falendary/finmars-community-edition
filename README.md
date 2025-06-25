@@ -31,8 +31,16 @@ This is the simplest way to get a local Finmars instance running.
 
 On Linux or Mac Enviroment (preferable on your Linux Server VM):
 ```bash
+# Install Updates
+
+sudo apt update
+sudo apt install python3-pip -y
+pip install flask
+
+
 # Clone the Finmars Community Edition repository
 git clone https://github.com/finmars-platform/finmars-community-edition.git
+
 
 # Navigate to the repository
 cd finmars-community-edition
@@ -56,6 +64,28 @@ make up
 docker ps
 
 ```
+
+## Local Development
+
+```aiignore
+# Create venv
+python3 -m venv venv
+
+# Activate Venv
+
+source venv/bin/activate
+
+# Install Requirements
+
+pip install -r requirements.txt    
+ 
+# Run Web Form 
+
+python3 init-setup.py
+
+# Check 80 port
+```
+
 
 ## License
 Please refer to the [LICENSE](https://github.com/finmars-platform/finmars-core/blob/main/LICENSE.md) file for a copy of the license.
