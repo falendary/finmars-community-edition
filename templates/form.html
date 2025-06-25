@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Finmars Initial Setup</h2>
+<p class="intro">This short wizard will help you install Finmars on your server. Please provide the details below and click Continue Setup.</p>
+<form method="POST">
+    <input type="hidden" name="step" value="generate_env">
+    <label>Main Domain:<br><input name="DOMAIN" required></label>
+    <label>Auth Domain:<br><input name="AUTH_DOMAIN" required></label>
+    <label>Admin Username:<br><input name="ADMIN_USERNAME" required></label>
+    <label>Admin Password:<br><input name="ADMIN_PASSWORD" type="password" required></label>
+    <button type="submit" class="btn">Continue Setup</button>
+</form>
+{% endblock %}

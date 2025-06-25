@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string, redirect, url_for
+from flask import Flask, request, render_template_string, redirect, url_for, render_template
 import subprocess, os, sys, json, argparse, time
 
 app = Flask(__name__)
@@ -9,81 +9,12 @@ LOG_FILE = 'init-setup-log.txt'
 # Define steps and associated commands and titles
 def get_setup_steps():
     return [
-        ('generate_env', ['make', 'generate-env'], '.env Created'),
-        ('init_cert', ['make', 'init-cert'], 'Certificates Initialized'),
-        ('init_keycloak', ['make', 'init-keycloak'], 'Keycloak Initialized'),
-        ('migrate', ['make', 'migrate'], 'Database Migrated'),
-        ('docker_up', ['make', 'up'], 'Services Started')
+        ('generate_env', ['make', 'generate-env'], 'Initial Settings'),
+        ('init_cert', ['make', 'init-cert'], 'Request Certificates'),
+        ('init_keycloak', ['make', 'init-keycloak'], 'Initializing Single-Sign-On'),
+        ('migrate', ['make', 'migrate'], 'Prepare Database'),
+        ('docker_up', ['make', 'up'], 'Run')
     ]
-
-# Common CSS style for templates
-base_style = '''<style>
-  body { font-family: system-ui, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-  .container { max-width: 640px; margin: 40px auto; background: #fff; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px; }
-  h2 { margin-top: 0; }
-  p.intro { font-size: 0.95rem; margin-bottom: 20px; }
-  label { display: block; margin-bottom: 8px; font-weight: 500; }
-  input { width: 100%; padding: 8px; margin: 4px 0 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
-  .btn { background-color: #f85e26; color: #fff; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-size: 1rem; display: block; margin: 20px auto 0; }
-  .btn:hover { opacity: 0.9; }
-  pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
-  .footer { text-align: center; margin-top: 20px; font-size: 0.9rem; }
-  .footer a { margin: 0 10px; color: #f85e26; text-decoration: none; }
-  .footer a:hover { text-decoration: underline; }
-</style>'''
-
-# Footer HTML
-footer_html = '''
-<div class="footer">
-  <a href="mailto:support@finmars.com" target="_blank">support@finmars.com</a> |
-  <a href="https://docs.finmars.com/shelves/community-edition" target="_blank">Documentation</a> |
-  <a href="https://github.com/finmars-platform/finmars-core/issues" target="_blank">Github</a>
-</div>'''
-
-# HTML templates
-form_html = base_style + '''
-<div class="container">
-  <h2>Finmars Initial Setup</h2>
-  <p class="intro">This short wizard will help you install Finmars on your server. Please provide the details below and click Continue Setup.</p>
-  <form method="POST">
-    <input type="hidden" name="step" value="generate_env">
-    <label>Main Domain (e.g. finmars.example.com):<br><input name="DOMAIN" required></label>
-    <label>Auth Domain (e.g. finmars-auth.example.com):<br><input name="AUTH_DOMAIN" required></label>
-    <label>Admin Username:<br><input name="ADMIN_USERNAME" required></label>
-    <label>Admin Password:<br><input name="ADMIN_PASSWORD" type="password" required></label>
-    <button type="submit" class="btn">Continue Setup</button>
-  </form>
-  ''' + footer_html + '''
-</div>
-'''
-
-step_button_html = base_style + '''
-<div class="container">
-  <h2>Finmars Setup: {{ label }}</h2>
-  <form method="POST">
-    <input type="hidden" name="step" value="{{ step }}">
-    <button type="submit" class="btn">Continue Setup</button>
-  </form>
-  ''' + footer_html + '''
-</div>
-'''
-
-status_html = base_style + '''
-<div class="container">
-  <h2>{{ title }}</h2>
-  <pre>{{ logs }}</pre>
-  <pre>Current status: {{ status }}</pre>
-  ''' + footer_html + '''
-</div>
-'''
-
-success_html = base_style + '''
-<div class="container">
-  <h2>✅ Setup Complete</h2>
-  <p>You can now use the Finmars Platform.</p>
-  ''' + footer_html + '''
-</div>
-'''
 
 # State management
 def default_state():
@@ -181,11 +112,11 @@ def setup():
         status = state.get(step)
         if status == 'pending':
             if step == 'generate_env':
-                return render_template_string(form_html)
-            return render_template_string(step_button_html, step=step, label=title)
+                return render_template("form.html")
+            return render_template("step.html", step=step, label=title)
         if status in ('requested','in_progress'):
-            return render_template_string(status_html, title=title, logs=logs, status=status)
-    return success_html
+            return render_template("status.html", title=title, logs=logs, status=status)
+    return render_template("success.html")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
