@@ -110,15 +110,18 @@ def run_pending_step():
     sys.stdout.flush()
     executed = False
     for step, cmd, title in get_setup_steps():
-        # If initializing certs, stop the web server to free port 80
-        if step == 'init_cert':
-            print("[init-setup] Stopping init-setup service to free port 80...")
-            sys.stdout.flush()
-            subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
-            # Brief pause to ensure port is released
-            time.sleep(2)
+
 
         if state.get(step) == 'requested':
+
+            # If initializing certs, stop the web server to free port 80
+            if step == 'init_cert':
+                print("[init-setup] Stopping init-setup service to free port 80...")
+                sys.stdout.flush()
+                subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
+                # Brief pause to ensure port is released
+                time.sleep(2)
+
             executed = True
             print(f"[init-setup] Executing step: {step}")
             sys.stdout.flush()
