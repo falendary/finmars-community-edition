@@ -82,20 +82,25 @@ def append_log(title, stdout, stderr):
         if stderr:
             logf.write(stderr)
 
-# Autostart disable
 
+# Autostart disable (systemd + cron)
 def disable_autostart():
     try:
-        # Stop running service
+        # Stop and disable the systemd service
         subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
-        # Disable and remove service unit
         subprocess.run(['systemctl', 'disable', 'init-setup'], check=False)
         unit_path = '/etc/systemd/system/init-setup.service'
         if os.path.exists(unit_path):
             os.remove(unit_path)
         subprocess.run(['systemctl', 'daemon-reload'], check=False)
-    except Exception:
+    except Exception as e:
+        print("[disable_autostart] error: %s" % e)
         pass
+    try:
+        # Remove cron job entry
+        subprocess.run("(crontab -l | grep -v 'init-setup.py --run-step') | crontab -", shell=True, check=False)
+    except Exception as e:
+        print("[disable_autostart] crontab error: %s" % e)
 
 # Runner: background run one pending requested step
 
