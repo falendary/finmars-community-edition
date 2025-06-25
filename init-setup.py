@@ -130,10 +130,13 @@ def run_pending_step():
     sys.stdout.flush()
     executed = False
     for step, cmd, title in get_setup_steps():
-        if step == 'init_cert':
-            subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
-            time.sleep(2)
+
         if state.get(step) == 'requested':
+
+            if step == 'init_cert':
+                subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
+                time.sleep(2)
+
             executed = True
             state[step] = 'in_progress'
             save_state(state)
