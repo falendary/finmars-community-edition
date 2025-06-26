@@ -12,11 +12,11 @@
     <input type="hidden" name="step" value="generate_env">
 
     <label>Main Domain:<br>
-        <input name="DOMAIN" id="domain" required pattern="^finmars\\.[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" placeholder="finmars.example.com">
+        <input name="DOMAIN" id="domain" required pattern="^[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$">
     </label>
 
     <label>Auth Domain:<br>
-        <input name="AUTH_DOMAIN" id="auth-domain" required pattern="^finmars\\.[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" placeholder="finmars-auth.example.com">
+        <input name="AUTH_DOMAIN" id="auth-domain" required pattern="^[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$">
     </label>
 
     <label>Admin Username:<br>
@@ -57,7 +57,7 @@
         const password = document.getElementById('password');
         const button = document.getElementById('submit-btn');
 
-        const pattern = /^finmars\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const pattern = /^[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
 
         const allFilled = domain.value && authDomain.value && username.value && password.value;
         const validDomains = pattern.test(domain.value) && pattern.test(authDomain.value);
