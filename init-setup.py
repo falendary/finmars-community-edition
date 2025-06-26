@@ -159,7 +159,7 @@ def setup():
             return render_template("status.html", title=title, logs=logs, status=status)
 
     env = load_env()
-    domain_name = env["DOMAIN"]
+    domain_name = env["DOMAIN_NAME"]
     return render_template("success.html", domain=domain_name)
 
 if __name__ == '__main__':
