@@ -1,6 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>{{ title }}</h2>
-<pre style="max-height: 60vh">{{ logs }}</pre>
-<pre>Current status: {{ status }}</pre>
+
+{% if status in ['requested', 'in_progress'] %}
+<div style="display: flex; align-items: center; gap: 10px;">
+    <div class="spinner"></div>
+    <p><strong>Status:</strong> <span style="color: orange;">{{ status }}... Please wait.</span></p>
+</div>
+{% elif status == 'failed' %}
+<p><strong>Status:</strong> <span style="color: red;">Failed ❌</span></p>
+{% elif status == 'done' %}
+<p><strong>Status:</strong> <span style="color: green;">Done ✅</span></p>
+{% else %}
+<p><strong>Status:</strong> {{ status }}</p>
+{% endif %}
+
+<pre id="log-box" style="max-height: 60vh; overflow-y: scroll;">{{ logs }}</pre>
+
+<!-- Refresh Button -->
+<button onclick="window.location.reload()" class="btn">🔄 Refresh</button>
+
+<!-- Spinner CSS -->
+<style>
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid orange;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+<script>
+    window.onload = function() {
+        var logBox = document.getElementById("log-box");
+        logBox.scrollTop = logBox.scrollHeight;
+    };
+</script>
 {% endblock %}
