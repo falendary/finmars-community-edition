@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 STATE_FILE = '.init-setup-state.json'
 LOG_FILE = 'init-setup-log.txt'
+ENV_FILE = ".env"
 
 # Define steps and associated commands and titles
 def get_setup_steps():
@@ -28,6 +29,19 @@ def load_state():
             return json.load(f)
     return default_state()
 
+def load_env():
+    env = {}
+    # 1. Open the .env file
+    with open(ENV_FILE) as f:
+        for line in f:
+            line = line.strip()            # remove spaces and newline
+            if not line or line.startswith("#"):
+                continue                   # skip blanks or comments
+            key, value = line.split("=", 1)
+            env[key] = value.strip().strip('"').strip("'")
+    return env
+
+
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
@@ -42,7 +56,6 @@ def append_log(title, stdout, stderr):
 # Autostart disable (systemd + cron)
 def disable_autostart():
     try:
-        subprocess.run(['systemctl', 'stop', 'init-setup'], check=False)
         subprocess.run(['systemctl', 'disable', 'init-setup'], check=False)
         unit_path = '/etc/systemd/system/init-setup.service'
         if os.path.exists(unit_path): os.remove(unit_path)
@@ -144,7 +157,10 @@ def setup():
                 return render_template("form.html")
         if status in ('requested','in_progress', 'pending'):
             return render_template("status.html", title=title, logs=logs, status=status)
-    return render_template("success.html")
+
+    env = load_env()
+    domain_name = env["DOMAIN"]
+    return render_template("success.html", domain=domain_name)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -154,4 +170,4 @@ if __name__ == '__main__':
         run_pending_step()
     else:
         if os.path.exists(LOG_FILE): os.remove(LOG_FILE)
-        app.run(host='0.0.0.0', port=8080)
+        app.run(host='0.0.0.0', port=8888)
