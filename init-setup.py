@@ -12,8 +12,8 @@ def get_setup_steps():
         ('generate_env', ['make', 'generate-env'], 'Initial Settings'),
         ('init_cert', ['make', 'init-cert'], 'Request Certificates'),
         ('init_keycloak', ['make', 'init-keycloak'], 'Initializing Single-Sign-On'),
-        ('migrate', ['make', 'migrate'], 'Prepare Database'),
-        ('docker_up', ['make', 'up'], 'Run')
+        ('migrate', ['make', 'migrate'], 'Preparing Database'),
+        ('docker_up', ['make', 'up'], 'Starting Services')
     ]
 
 # State management
