@@ -1,13 +1,72 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Finmars Initial Setup</h2>
-<p class="intro">This short wizard will help you install Finmars on your server. Please provide the details below and click Continue Setup.</p>
-<form method="POST">
+<p class="intro">Welcome! This short wizard will help you install Finmars on your server. Please provide the details below and click Continue Setup.</p>
+<p>
+    Please, verify your setup with this <a href="https://docs.finmars.com/books/installation-guide-with-aws-simple" target="_blank">Community Guide</a>
+</p>
+<p>
+    You should already assigned Public IP address of that Server to Domain Names
+</p>
+<form method="POST" id="setup-form">
     <input type="hidden" name="step" value="generate_env">
-    <label>Main Domain:<br><input name="DOMAIN" required></label>
-    <label>Auth Domain:<br><input name="AUTH_DOMAIN" required></label>
-    <label>Admin Username:<br><input name="ADMIN_USERNAME" required></label>
-    <label>Admin Password:<br><input name="ADMIN_PASSWORD" type="password" required></label>
-    <button type="submit" class="btn">Continue Setup</button>
+
+    <label>Main Domain:<br>
+        <input name="DOMAIN" id="domain" required pattern="^finmars\\.[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" placeholder="finmars.example.com">
+    </label>
+
+    <label>Auth Domain:<br>
+        <input name="AUTH_DOMAIN" id="auth-domain" required pattern="^finmars\\.[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" placeholder="finmars-auth.example.com">
+    </label>
+
+    <label>Admin Username:<br>
+        <input name="ADMIN_USERNAME" id="username" required placeholder="finmars_admin">
+    </label>
+
+    <label>Admin Password:<br>
+        <input name="ADMIN_PASSWORD" id="password" type="password" required>
+    </label>
+
+    <button type="submit" id="submit-btn" class="btn" disabled>Continue Setup</button>
 </form>
+
+<style>
+    button.btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button.btn:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+</style>
+
+
+<script>
+    function validateForm() {
+        const domain = document.getElementById('domain');
+        const authDomain = document.getElementById('auth-domain');
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+        const button = document.getElementById('submit-btn');
+
+        const pattern = /^finmars\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        const allFilled = domain.value && authDomain.value && username.value && password.value;
+        const validDomains = pattern.test(domain.value) && pattern.test(authDomain.value);
+
+        button.disabled = !(allFilled && validDomains);
+    }
+
+    document.querySelectorAll('#setup-form input').forEach(input => {
+        input.addEventListener('input', validateForm);
+    });
+</script>
 {% endblock %}
