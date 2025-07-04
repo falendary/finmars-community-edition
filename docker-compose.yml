@@ -192,7 +192,7 @@ services:
       - .env
 
   workflow-portal:
-    image: finmars/finmars-workflow-portal:1.21.0-stable
+    image: finmars/finmars-workflow-portal:1.21.1-stable
     restart: always
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/w/_nuxt/
