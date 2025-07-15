@@ -45,6 +45,10 @@ git clone https://github.com/finmars-platform/finmars-community-edition.git
 # Navigate to the repository
 cd finmars-community-edition
 
+# Create Storage folder
+mkdir ./storage
+sudo chown -R 1000:1000 ./storage
+
 # Configure env file
 make generate-env
 
