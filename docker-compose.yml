@@ -17,6 +17,8 @@ services:
       - portal
       - workflow-portal
       - finmars-start-page
+      - pdfgen
+      - excelgen
     ports:
       - "80:80"
       - "443:443"
@@ -93,7 +95,7 @@ services:
       - redis
 
   core-migration:
-    image: finmars/finmars-core:1.21.0-stable
+    image: finmars/finmars-core:1.21.13-stable
     volumes:
       - ./storage:/var/app/finmars_data
     env_file:
@@ -106,7 +108,7 @@ services:
       - redis
 
   workflow:
-    image: finmars/finmars-workflow:1.21.0-stable
+    image: finmars/finmars-workflow:1.21.3-stable
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -122,7 +124,7 @@ services:
       - keycloak
 
   workflow-worker:
-    image: finmars/finmars-workflow:1.21.0-stable
+    image: finmars/finmars-workflow:1.21.3-stable
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -140,7 +142,7 @@ services:
       - keycloak
 
   workflow-scheduler:
-    image: finmars/finmars-workflow:1.21.0-stable
+    image: finmars/finmars-workflow:1.21.3-stable
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -156,7 +158,7 @@ services:
       - redis
 
   workflow-migration:
-    image: finmars/finmars-workflow:1.21.0-stable
+    image: finmars/finmars-workflow:1.21.3-stable
     volumes:
       - ./storage:/var/app/finmars_data
     env_file:
@@ -169,6 +171,14 @@ services:
       - db
       - redis
 
+  pdfgen:
+    image: finmars/finmars-pdfgen:latest
+    restart: always
+
+  excelgen:
+    image: finmars/finmars-excelgen:latest
+    restart: always
+
   finmars-start-page:
     image: finmars/finmars-start-page:1.21.0-stable
     restart: always
@@ -176,7 +186,7 @@ services:
       - .env
 
   portal:
-    image: finmars/finmars-portal:1.21.0-stable
+    image: finmars/finmars-portal:1.21.12-stable
     restart: always
     env_file:
       - .env
@@ -192,7 +202,7 @@ services:
       - .env
 
   workflow-portal:
-    image: finmars/finmars-workflow-portal:1.21.1-stable
+    image: finmars/finmars-workflow-portal:1.21.7-stable
     restart: always
     environment:
       - NUXT_APP_BUILD_ASSETS_DIR=/realm00000/w/_nuxt/

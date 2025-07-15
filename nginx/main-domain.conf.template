@@ -214,6 +214,14 @@ server {
         etag off;
     }
 
+	location /services/pdf {
+		proxy_pass http://pdfgen:8080;
+	}
+
+	location /services/excel {
+		proxy_pass http://excelgen:80;
+	}
+
 	location / {
 		proxy_set_header Host $http_host;
 		proxy_set_header X-Forwarded-Host $http_host;
