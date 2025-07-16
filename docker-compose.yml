@@ -64,7 +64,7 @@ services:
       - "8004:8080"
 
   core:
-    image: finmars/finmars-core:1.21.0-stable
+    image: finmars/finmars-core:1.21.13-stable
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
@@ -79,7 +79,7 @@ services:
       - keycloak
 
   core-worker:
-    image: finmars/finmars-core:1.21.0-stable
+    image: finmars/finmars-core:1.21.13-stable
     restart: always
     volumes:
       - ./storage:/var/app/finmars_data
